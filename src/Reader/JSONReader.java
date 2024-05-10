@@ -2,6 +2,7 @@ package Reader;
 
 import Model.Reactor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -18,20 +19,27 @@ public class JSONReader extends FileReader {
             try {
                 list = readJSON(file);
                 for (Reactor reactor : list) {
-                    reactor.setFiletype("JSON");
+                    reactor.setFileType("JSON");
                 }
                 return list;
             } catch (IOException e) {
+                e.printStackTrace();
             }
-        } else if (nextFileReader != null) {
-            return nextFileReader.read(file);
+        } else if (nextReader != null) {
+            return nextReader.read(file);
         }
         return null;
     }
 
     public ArrayList<Reactor> readJSON(File file) throws FileNotFoundException, IOException {
         ObjectMapper mapper = new ObjectMapper();
-        ArrayList<Reactor> list = mapper.readValue(file, mapper.getTypeFactory().constructCollectionType(ArrayList.class, Reactor.class));
-        return list;
+        try {
+            ArrayList<Reactor> list = mapper.readValue(file, mapper.getTypeFactory().constructCollectionType(ArrayList.class, Reactor.class));
+            return list;
+        } catch (MismatchedInputException e) {
+            // Обработка ошибки десериализации, например вывод сообщения пользователю
+            System.out.println("Ошибка формата JSON файла!");
+            return null;
+        }
     }
 }

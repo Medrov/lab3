@@ -1,6 +1,6 @@
 package Reader;
 
-import ReactorsRelated.Reactor;
+import Model.Reactor;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.xml.stream.XMLEventReader;
@@ -12,29 +12,40 @@ import javax.xml.stream.events.XMLEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class XMLReader extends FileReader{
+
     @Override
     public ArrayList<Reactor> read(File file) {
         ArrayList<Reactor> list;
-        if ("xml".equals(FilenameUtils.getExtension(file.getAbsolutePath()))) {
-            list = readXML(file);
-            for (Reactor reactor : list){
-                reactor.setFiletype("XML");
+        if("xml".equals(FilenameUtils.getExtension(file.getAbsolutePath()))){
+            try {
+                list = readXML(file);
+                for (Reactor reactor : list) {
+                    reactor.setFileType("XML");
+                }
+                return list;
             }
-            return list;
-        } else if (nextFileReader != null) {
-            return nextFileReader.read(file);
+            catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+        else if(nextReader != null){
+            return nextReader.read(file);
         }
         return null;
     }
-    public ArrayList<Reactor> readXML(File file) {
+
+    public ArrayList<Reactor> readXML(File file) throws IOException, FileNotFoundException{
         ArrayList<Reactor> list = new ArrayList<>();
         Reactor reactor = null;
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         try {
-            XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream(file.getAbsolutePath())); // проходим по всем элементам xml файла
+            // проходим по всем элементам xml файла
+            XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream(file.getAbsolutePath()));
             while (reader.hasNext()) {
                 XMLEvent xmlEvent = reader.nextEvent();
                 if (xmlEvent.isStartElement()) {
@@ -45,7 +56,7 @@ public class XMLReader extends FileReader{
                         }
                         case "class" -> {
                             xmlEvent = reader.nextEvent();
-                            reactor.setType(xmlEvent.asCharacters().getData());
+                            reactor.setReactorClass(xmlEvent.asCharacters().getData());
                         }
                         case "burnup" -> {
                             xmlEvent = reader.nextEvent();
@@ -67,7 +78,7 @@ public class XMLReader extends FileReader{
                             xmlEvent = reader.nextEvent();
                             reactor.setECapacity(Double.valueOf(xmlEvent.asCharacters().getData()));
                         }
-                        case "life_time" -> { 
+                        case "life_time" -> {
                             xmlEvent = reader.nextEvent();
                             reactor.setLifetime(Integer.parseInt(xmlEvent.asCharacters().getData()));
                         }
@@ -90,5 +101,4 @@ public class XMLReader extends FileReader{
         }
         return list;
     }
-
 }

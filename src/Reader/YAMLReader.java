@@ -1,10 +1,8 @@
 package Reader;
 
-import ReactorsRelated.Reactor;
+import Model.Reactor;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.FilenameUtils;
+
 
 public class YAMLReader extends FileReader {
 
@@ -22,14 +22,14 @@ public class YAMLReader extends FileReader {
             try {
                 list = readYAML(file);
                 for (Reactor reactor : list) {
-                    reactor.setFiletype("YAML");
+                    reactor.setFileType("YAML");
                 }
                 return list;
             } catch (IOException e) {
                 System.out.println("на ямле баг");
             }
-        } else if (nextFileReader != null) {
-            return nextFileReader.read(file);
+        } else if (nextReader != null) {
+            return nextReader.read(file);
         }
         return null;
     }

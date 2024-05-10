@@ -6,13 +6,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 public abstract class FileReader {
-    
-    public FileReader nextFileReader;
-    
-    public void setNextFileReader(FileReader nextFileReader){
-        this.nextFileReader = nextFileReader;
+    public FileReader nextReader;
+    public void setNextReader(FileReader nextReader){
+        this.nextReader = nextReader;
     }
-    
     public abstract ArrayList<Reactor> read(File file);
-    
+
 }

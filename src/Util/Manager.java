@@ -13,12 +13,12 @@ public class Manager {
 
     Repository repository = new Repository();
     FileReader XMLfilereader = new XMLReader();
-    
+
     public Manager() {
         FileReader YAMLfilereader = new YAMLReader();
         FileReader JSONfilereader = new JSONReader();
-        XMLfilereader.setNextFileReader(YAMLfilereader);
-        YAMLfilereader.setNextFileReader(JSONfilereader);
+        XMLfilereader.setNextReader(YAMLfilereader);
+        YAMLfilereader.setNextReader(JSONfilereader);
     }
 
     public void setList(File file) {
@@ -31,5 +31,5 @@ public class Manager {
     public ArrayList<Reactor> getList() {
         return repository.getList();
     }
-    
+
 }
