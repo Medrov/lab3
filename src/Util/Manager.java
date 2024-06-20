@@ -1,17 +1,16 @@
 package Util;
 
-import Reader.FileReader;
-import Reader.JSONReader;
-import Reader.XMLReader;
-import Reader.YAMLReader;
+import Reader.*;
 import Model.Reactor;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Manager {
 
     Repository repository = new Repository();
+    private Aggregator aggregator = new Aggregator();
     FileReader XMLfilereader = new XMLReader();
 
     public Manager() {
@@ -30,6 +29,40 @@ public class Manager {
 
     public ArrayList<Reactor> getList() {
         return repository.getList();
+    }
+
+    public void readDatabase() {
+        DatabaseReader reader = new DatabaseReader();
+        if (repository.getReactorTypes() != null) {
+            repository.setReactors(reader.readDB(repository.getReactorTypes()));
+            aggregator.calculateFuelLoad(repository.getReactors());
+        } else {
+            System.out.println("Сначала прочитайте типы реакторов!");
+        }
+    }
+    public Map<String, Map<Integer, Double>> aggregateByOperator() {
+        if (repository.getReactors() != null) {
+            return aggregator.aggregateByOperator(repository.getReactors());
+        } else {
+            System.out.println("Сначала прочитайте БД!");
+            return null;
+        }
+    }
+    public Map<String, Map<Integer, Double>> aggregateByCountry() {
+        if (repository.getReactors() != null) {
+            return aggregator.aggregateByCountry(repository.getReactors());
+        } else {
+            System.out.println("Сначала прочитайте БД!");
+            return null;
+        }
+    }
+    public Map<String, Map<Integer, Double>> aggregateByRegion() {
+        if (repository.getReactors() != null) {
+            return aggregator.aggregateByRegion(repository.getReactors());
+        } else {
+            System.out.println("Сначала прочитайте БД!");
+            return null;
+        }
     }
 
 }
